@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>React Todo List with Hooks</title>
+  <style>
+    body {
+      background: #eef2f7;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      height: 100vh;
+      margin: 0;
+      padding: 2rem 1rem;
+    }
+    #root {
+      background: white;
+      padding: 2rem 2.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      width: 400px;
+      max-width: 95vw;
+    }
+    h1 {
+      color: #222;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      font-size: 2rem;
+      letter-spacing: 1.2px;
+    }
+    form {
+      display: flex;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      font-size: 1.1rem;
+      border-radius: 0.5rem;
+      border: 1.5px solid #ccc;
+      transition: border-color 0.25s ease;
+      outline-offset: 2px;
+    }
+    input[type="text"]:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+    button.add-btn {
+      background: #007bff;
+      border: none;
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 0 1.25rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    button.add-btn:hover {
+      background: #0056b3;
+      box-shadow: 0 6px 14px rgba(0,86,179,0.5);
+    }
+    ul.todo-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 350px;
+      overflow-y: auto;
+    }
+    ul.todo-list::-webkit-scrollbar {
+      width: 8px;
+    }
+    ul.todo-list::-webkit-scrollbar-thumb {
+      background-color: rgba(0,0,0,0.1);
+      border-radius: 4px;
+    }
+    li.todo-item {
+      background: #f8f9fb;
+      padding: 0.8rem 1rem;
+      margin-bottom: 0.7rem;
+      border-radius: 0.6rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      user-select: none;
+      transition: background-color 0.2s ease;
+    }
+    li.todo-item.completed {
+      background: #d4edda;
+      color: #495c2a;
+      text-decoration: line-through;
+      font-style: italic;
+    }
+    li.todo-item:hover {
+      background: #e2e8f0;
+    }
+    span.todo-text {
+      flex: 1;
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1.3;
+      padding-right: 0.75rem;
+    }
+    button.delete-btn {
+      background: transparent;
+      border: none;
+      color: #dc3545;
+      font-weight: 700;
+      font-size: 1.3rem;
+      cursor: pointer;
+      transition: color 0.25s ease;
+      user-select: none;
+      padding: 0;
+      width: 28px;
+      height: 28px;
+      line-height: 26px;
+      text-align: center;
+      border-radius: 50%;
+    }
+    button.delete-btn:hover {
+      color: #a71d2a;
+      background: rgba(220, 53, 69, 0.1);
+    }
+    @media (max-width: 450px) {
+      #root {
+        width: 100%;
+        padding: 1.5rem 1.5rem;
+      }
+      h1 {
+        font-size: 1.7rem;
+      }
+      button.add-btn {
+        font-size: 1rem;
+      }
+      span.todo-text {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+  <script>
+    const { useState } = React;
+
+    function TodoList() {
+      const [todos, setTodos] = useState([]);
+      const [inputValue, setInputValue] = useState('');
+
+      function handleAdd(e) {
+        e.preventDefault();
+        const trimmedValue = inputValue.trim();
+        if (!trimmedValue) return;
+        const newTodo = {
+          id: Date.now(),
+          text: trimmedValue,
+          completed: false,
+        };
+        setTodos([newTodo, ...todos]);
+        setInputValue('');
+      }
+
+      function toggleComplete(id) {
+        setTodos(todos.map(todo =>
+          todo.id === id ? {...todo, completed: !todo.completed} : todo
+        ));
+      }
+
+      function deleteTodo(id) {
+        setTodos(todos.filter(todo => todo.id !== id));
+      }
+
+      return (
+        React.createElement('div', null,
+          React.createElement('h1', null, 'Todo List'),
+          React.createElement('form', { onSubmit: handleAdd, noValidate: true },
+            React.createElement('input', {
+              type: 'text',
+              placeholder: 'Add a new task...',
+              value: inputValue,
+              onChange: e => setInputValue(e.target.value),
+              'aria-label': 'Add new todo'
+            }),
+            React.createElement('button', { type: 'submit', className: 'add-btn' }, 'Add')
+          ),
+          React.createElement('ul', { className: 'todo-list' },
+            todos.map(todo =>
+              React.createElement('li', {
+                className: 'todo-item' + (todo.completed ? ' completed' : ''),
+                key: todo.id
+              },
+                React.createElement('span', {
+                  className: 'todo-text',
+                  onClick: () => toggleComplete(todo.id),
+                  role: 'button',
+                  tabIndex: 0,
+                  onKeyDown: e => { if(e.key === 'Enter' || e.key === ' ') toggleComplete(todo.id); },
+                  'aria-pressed': todo.completed
+                }, todo.text),
+                React.createElement('button', {
+                  className: 'delete-btn',
+                  onClick: () => deleteTodo(todo.id),
+                  title: 'Delete task',
+                  'aria-label': `Delete task ${todo.text}`
+                }, '\u2715')
+              )
+            )
+          )
+        )
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(React.createElement(TodoList));
+  </script>
+</body>
+</html>
+
