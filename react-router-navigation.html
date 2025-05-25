@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>React Router Navigation App</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fafafa;
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    nav {
+      background-color: #007bff;
+      padding: 1rem 2rem;
+      display: flex;
+      gap: 1.2rem;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+    }
+    nav a {
+      color: white;
+      font-weight: 600;
+      font-size: 1.2rem;
+      text-decoration: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.5rem;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    nav a:hover {
+      background-color: #0056b3;
+    }
+    nav a.active {
+      background-color: #003d80;
+      box-shadow: 0 0 8px #00264d;
+    }
+    main {
+      flex: 1;
+      max-width: 800px;
+      margin: 3rem auto;
+      padding: 1rem 2rem;
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+      min-height: 260px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      font-weight: 800;
+      color: #007bff;
+    }
+    p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+      color: #444;
+    }
+    @media (max-width: 600px) {
+      nav {
+        flex-direction: column;
+        padding: 1rem;
+      }
+      nav a {
+        font-size: 1rem;
+        padding: 0.5rem 0.4rem;
+      }
+      main {
+        margin: 2rem 1rem;
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-router-dom@6/umd/react-router-dom.development.js"></script>
+
+  <script>
+    const { BrowserRouter, Routes, Route, NavLink } = ReactRouterDOM;
+
+    function Home() {
+      return (
+        React.createElement('div', null,
+          React.createElement('h1', null, 'Home'),
+          React.createElement('p', null, 'Welcome to the home page of our React Router example app. Use the navigation links above to switch pages without reloading.')
+        )
+      );
+    }
+    function About() {
+      return (
+        React.createElement('div', null,
+          React.createElement('h1', null, 'About'),
+          React.createElement('p', null, 'This is the about page. Here we share information about the purpose of this React Router demo app.')
+        )
+      );
+    }
+    function Contact() {
+      return (
+        React.createElement('div', null,
+          React.createElement('h1', null, 'Contact'),
+          React.createElement('p', null, 'Feel free to contact us via email at contact@example.com or phone at (123) 456-7890.')
+        )
+      );
+    }
+
+    function App() {
+      return (
+        React.createElement(BrowserRouter, null,
+          React.createElement('nav', null,
+            React.createElement(NavLink, {
+              to: '/',
+              end: true,
+              className: ({ isActive }) => isActive ? 'active' : ''
+            }, 'Home'),
+            React.createElement(NavLink, {
+              to: '/about',
+              className: ({ isActive }) => isActive ? 'active' : ''
+            }, 'About'),
+            React.createElement(NavLink, {
+              to: '/contact',
+              className: ({ isActive }) => isActive ? 'active' : ''
+            }, 'Contact')
+          ),
+          React.createElement('main', null,
+            React.createElement(Routes, null,
+              React.createElement(Route, { path: '/', element: React.createElement(Home) }),
+              React.createElement(Route, { path: '/about', element: React.createElement(About) }),
+              React.createElement(Route, { path: '/contact', element: React.createElement(Contact) })
+            )
+          )
+        )
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(React.createElement(App));
+  </script>
+</body>
+</html>
+
