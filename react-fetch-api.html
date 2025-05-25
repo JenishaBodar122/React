@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>React Fetch API Data</title>
+  <style>
+    body {
+      background: #f4f7fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0; 
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      color: #333;
+    }
+    #root {
+      max-width: 700px;
+      width: 100%;
+      background: white;
+      padding: 2rem 2.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    }
+    h1 {
+      font-weight: 800;
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: #007bff;
+      text-align: center;
+    }
+    .loading {
+      text-align: center;
+      font-size: 1.3rem;
+      color: #888;
+      margin: 2rem 0;
+    }
+    .error {
+      text-align: center;
+      font-size: 1.3rem;
+      color: #dc3545;
+      margin: 2rem 0;
+      font-weight: 600;
+    }
+    ul.posts-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    ul.posts-list::-webkit-scrollbar {
+      width: 7px;
+    }
+    ul.posts-list::-webkit-scrollbar-thumb {
+      background-color: rgba(0,0,0,0.1);
+      border-radius: 4px;
+    }
+    li.post-item {
+      border-bottom: 1.5px solid #e1e8f0;
+      padding: 1rem 0;
+      cursor: default;
+    }
+    li.post-item:last-child {
+      border-bottom: none;
+    }
+    h2.post-title {
+      font-size: 1.3rem;
+      margin: 0 0 0.4rem 0;
+      color: #0056b3;
+      font-weight: 700;
+    }
+    p.post-body {
+      font-size: 1.05rem;
+      color: #444;
+      margin: 0;
+      line-height: 1.4;
+      user-select: text;
+    }
+    @media (max-width: 480px) {
+      #root {
+        padding: 1.5rem 1.5rem;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      h2.post-title {
+        font-size: 1.1rem;
+      }
+      p.post-body {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+  <script>
+    const { useState, useEffect } = React;
+
+    function FetchPosts() {
+      const [posts, setPosts] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState(null);
+
+      useEffect(() => {
+        fetch('https://jsonplaceholder.typicode.com/posts?_limit=12')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            setPosts(data);
+            setLoading(false);
+          })
+          .catch(err => {
+            setError(err.message);
+            setLoading(false);
+          });
+      }, []);
+
+      return (
+        React.createElement('div', null,
+          React.createElement('h1', null, 'Posts from JSONPlaceholder'),
+          loading && React.createElement('div', { className: 'loading' }, 'Loading posts...'),
+          error && React.createElement('div', { className: 'error' }, `Error: ${error}`),
+          !loading && !error && React.createElement('ul', { className: 'posts-list' },
+            posts.map(post =>
+              React.createElement('li', { key: post.id, className: 'post-item' },
+                React.createElement('h2', { className: 'post-title' }, post.title),
+                React.createElement('p', { className: 'post-body' }, post.body)
+              )
+            )
+          )
+        )
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(React.createElement(FetchPosts));
+  </script>
+</body>
+</html>
